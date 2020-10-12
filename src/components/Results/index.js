@@ -1,17 +1,21 @@
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect'
 
 import Results from './Results';
 
 const mapStateToProps = (state) => ({
   chaptersSize: state.chapters.length,
-  sectionsSize: getSections(state.chapters).length,
-  progress: getProgress(state.chapters),
+  sectionsSize: getSections(state).length,
+  progress: getProgress(state),
 });
 
-const getSections = (chapters) => chapters.flatMap(chapter => chapter.sections);
+const getSections = createSelector(
+  state => state.chapters,
+  chapters => chapters.flatMap(chapter => chapter.sections)
+);
 
-const getProgress = (chapters) => {
-  const sections = getSections(chapters);
+const getProgress = (state) => {
+  const sections = getSections(state);
   const completedSections = sections.filter(section => section.completed === true);
 
   return 100 * completedSections.length / sections.length;
