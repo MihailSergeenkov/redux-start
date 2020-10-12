@@ -2,15 +2,7 @@ import React from 'react';
 
 import Section from '../Section';
 
-const filters = {
-  SHOW_ALL: () => true,
-  SHOW_COMPLETED: (todo) => !!todo.completed,
-  SHOW_UNCOMPLETED: (todo) => !todo.completed,
-};
-
-const Chapter = ({ chapter, index, visibilityFilter, addSection }) => {
-  const sections = chapter.sections.filter(filters[visibilityFilter]);
-
+const Chapter = ({ chapter, index, sections, addSection }) => {
   return (
     <div>
       <label className='block select-none'>
@@ -23,7 +15,7 @@ const Chapter = ({ chapter, index, visibilityFilter, addSection }) => {
         {chapter.title}
       </label>
       {
-        sections.map(
+        sections[index].map(
           (section, sectionIndex) => (
             <div key={sectionIndex}>
               <Section
