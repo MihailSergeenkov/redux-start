@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 
 import { addSection } from '../../redux/actions/sections';
 import Chapter from './Chapter';
+import { sortableElement } from 'react-sortable-hoc';
 
 const filters = {
   SHOW_ALL: () => true,
@@ -27,4 +28,4 @@ const mapDispatchToProps = (dispatch) => ({
   addSection: (title, chapterIndex) => dispatch(addSection(title, chapterIndex)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chapter);
+export default connect(mapStateToProps, mapDispatchToProps)(sortableElement(Chapter));

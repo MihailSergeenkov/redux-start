@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { addChapter } from '../../redux/actions/chapters';
+import { addChapter, sortChapters } from '../../redux/actions/chapters';
 import ChaptersList from './ChaptersList';
 
 const mapStateToProps = (state) => ({
@@ -9,6 +9,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addChapter: (title) => dispatch(addChapter(title)),
+  sortChapters: ({ oldIndex, newIndex }) => dispatch(sortChapters(oldIndex, newIndex)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChaptersList);
