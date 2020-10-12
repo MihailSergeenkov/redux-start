@@ -1,3 +1,5 @@
+import arrayMove from 'array-move';
+
 import * as chapterActions from '../actionTypes/chapters';
 import * as sectionActions from '../actionTypes/sections';
 
@@ -14,6 +16,8 @@ const initialState = [{
 
 export const chapters = (state = initialState, action) => {
   switch (action.type) {
+    case chapterActions.SORT_CHAPTERS:
+      return arrayMove(state, action.oldIndex, action.newIndex);
     case chapterActions.ADD_CHAPTER:
       return state.concat({
         title: action.title,

@@ -1,16 +1,24 @@
-import React from 'react';
+import React  from 'react';
+import { sortableContainer } from 'react-sortable-hoc';
 
 import Chapter from '../Chapter';
 
-const ChaptersList = ({ chapters, addChapter }) => {
+const SortableContainer = sortableContainer(({ children }) => {
+  return <div>{children}</div>;
+});
+
+const ChaptersList = ({ chapters, addChapter, sortChapters }) => {
   return (
-    <div>
+    <SortableContainer onSortEnd={sortChapters}>
       {
         chapters && chapters.map(
           (chapter, index) => (
-            <div key={index}>
-              <Chapter chapter={chapter} index={index} />
-            </div>
+            <Chapter
+              key={`item-${index}`}
+              chapter={chapter}
+              chapterIndex={index}
+              index={index}
+            />
           )
         )
       }
@@ -26,7 +34,7 @@ const ChaptersList = ({ chapters, addChapter }) => {
         <input name='title' />
         <button>Add chapter</button>
       </form>
-    </div>
+    </SortableContainer>
   );
 };
 

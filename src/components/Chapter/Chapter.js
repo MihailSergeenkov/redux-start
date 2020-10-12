@@ -2,7 +2,7 @@ import React from 'react';
 
 import Section from '../Section';
 
-const Chapter = ({ chapter, index, sections, addSection }) => {
+const Chapter = ({ chapter, chapterIndex, sections, addSection }) => {
   return (
     <div>
       <label className='block select-none'>
@@ -15,13 +15,13 @@ const Chapter = ({ chapter, index, sections, addSection }) => {
         {chapter.title}
       </label>
       {
-        sections[index].map(
+        sections && sections[chapterIndex].map(
           (section, sectionIndex) => (
             <div key={sectionIndex}>
               <Section
                 section={section}
                 sectionIndex={sectionIndex}
-                chapterIndex={index}
+                chapterIndex={chapterIndex}
               />
             </div>
           )
@@ -31,7 +31,7 @@ const Chapter = ({ chapter, index, sections, addSection }) => {
         onSubmit={
           (e) => {
             e.preventDefault();
-            addSection(e.target.title.value, index);
+            addSection(e.target.title.value, chapterIndex);
             e.target.title.value = '';
           }
         }
