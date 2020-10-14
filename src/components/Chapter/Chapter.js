@@ -1,32 +1,44 @@
 import React from 'react';
+import { sortableHandle, sortableContainer } from 'react-sortable-hoc';
 
 import Section from '../Section';
 
-const Chapter = ({ chapter, chapterIndex, sections, addSection }) => {
+const DragHandle = sortableHandle(() => <span>::</span>);
+
+const SortableContainer = sortableContainer(({ children }) => {
+  return <div>{children}</div>;
+});
+
+const Chapter = ({ chapter, chapterIndex, sections, addSection, sortSections }) => {
   return (
     <div>
       <label className='block select-none'>
+        <DragHandle />
+        {chapter.title}
+        {' '}
         <input
           type='checkbox'
           checked={chapter.completed}
           readOnly
         />
-        {' '}
-        {chapter.title}
       </label>
-      {
-        sections && sections[chapterIndex].map(
-          (section, sectionIndex) => (
-            <div key={sectionIndex}>
-              <Section
-                section={section}
-                sectionIndex={sectionIndex}
-                chapterIndex={chapterIndex}
-              />
-            </div>
+      <SortableContainer onSortEnd={sortSections} >
+        {
+          sections && sections[chapterIndex].map(
+            (section, sectionIndex) => (
+              <div key={sectionIndex}>
+                <Section
+                  index={sectionIndex}
+                  collection={chapterIndex}
+                  section={section}
+                  sectionIndex={sectionIndex}
+                  chapterIndex={chapterIndex}
+                />
+              </div>
+            )
           )
-        )
-      }
+        }
+      </SortableContainer>
       <form
         onSubmit={
           (e) => {

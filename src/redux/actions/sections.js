@@ -11,3 +11,17 @@ export const toggleSection = (sectionIndex, chapterIndex) => ({
   sectionIndex,
   chapterIndex,
 });
+
+export const sortSections = (oldIndex, newIndex, collection) => ({
+  type: sectionActions.SORT_SECTIONS,
+  oldIndex,
+  newIndex,
+  collection,
+});
+
+export const replaceSection = (sectionIndex, chapterIndex, newChapterIndex) => ({
+  type: sectionActions.REPLACE_SECTION,
+  sectionIndex,
+  chapterIndex,
+  newChapterIndex,
+});

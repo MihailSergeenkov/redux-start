@@ -1,2 +1,4 @@
 export const ADD_SECTION = 'ADD_SECTION';
 export const TOGGLE_SECTION = 'TOGGLE_SECTION';
+export const SORT_SECTIONS = 'SORT_SECTIONS';
+export const REPLACE_SECTION = 'REPLACE_SECTION';
