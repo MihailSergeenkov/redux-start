@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { addSection } from '../../redux/actions/sections';
+import { addSection, sortSections } from '../../redux/actions/sections';
 import Chapter from './Chapter';
 import { sortableElement } from 'react-sortable-hoc';
 
@@ -26,6 +26,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   addSection: (title, chapterIndex) => dispatch(addSection(title, chapterIndex)),
+  sortSections: ({ oldIndex, newIndex, collection }) => dispatch(sortSections(oldIndex, newIndex, collection)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(sortableElement(Chapter));

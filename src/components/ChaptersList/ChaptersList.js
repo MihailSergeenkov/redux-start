@@ -9,7 +9,7 @@ const SortableContainer = sortableContainer(({ children }) => {
 
 const ChaptersList = ({ chapters, addChapter, sortChapters }) => {
   return (
-    <SortableContainer onSortEnd={sortChapters}>
+    <SortableContainer onSortEnd={sortChapters} useDragHandle>
       {
         chapters && chapters.map(
           (chapter, index) => (

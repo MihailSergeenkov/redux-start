@@ -58,6 +58,50 @@ export const chapters = (state = initialState, action) => {
             : chapter
         )
       );
+    case sectionActions.SORT_SECTIONS:
+      return state.map(
+        (chapter, index) => {
+          if (index === action.collection) {
+            const sections = arrayMove(chapter.sections, action.oldIndex, action.newIndex);
+
+            return { ...chapter, sections }
+          } else {
+            return chapter;
+          }
+        }
+      );
+    case sectionActions.REPLACE_SECTION:
+      let section;
+      let chapters = state.map(
+        (chapter, index) => {
+          if (index === action.chapterIndex) {
+            let sections = chapter.sections;
+            section = sections[action.sectionIndex];
+            delete sections[action.sectionIndex]
+            sections = sections.filter((section) => section !== undefined);
+
+            return { ...chapter, sections };
+          } else {
+            return chapter;
+          }
+        }
+      );
+
+      return chapters.map(
+        (chapter, index) => {
+          if (index === action.newChapterIndex) {
+            return {
+              ...chapter,
+              sections: chapter.sections.concat({
+                title: section.title,
+                completed: section.completed,
+              })
+            };
+          } else {
+            return chapter;
+          }
+        }
+      );
     default:
       return state;
   }
