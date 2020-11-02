@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 
-import { addSection, sortSections } from '../../redux/actions/sections';
+import { addSection, sortSections } from '../../redux/slices/chapters';
 import Chapter from './Chapter';
 import { sortableElement } from 'react-sortable-hoc';
 
@@ -11,7 +11,7 @@ const filters = {
 };
 
 const fetchSectionsByChapter = (state) => (
-  state.chapters.reduce(
+  state.chapters.present.data.reduce(
     (result, chapter, index) => {
       result[index] = chapter.sections.filter(filters[state.visibilityFilter]);
       return result;
@@ -25,8 +25,19 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addSection: (title, chapterIndex) => dispatch(addSection(title, chapterIndex)),
-  sortSections: ({ oldIndex, newIndex, collection }) => dispatch(sortSections(oldIndex, newIndex, collection)),
+  addSection: (title, chapterIndex) => (
+    dispatch(addSection({
+      title,
+      chapterIndex,
+    }))
+  ),
+  sortSections: ({ oldIndex, newIndex, collection }) => (
+    dispatch(sortSections({
+      oldIndex,
+      newIndex,
+      collection,
+    }))
+    ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(sortableElement(Chapter));

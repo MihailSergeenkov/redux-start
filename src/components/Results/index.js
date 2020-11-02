@@ -4,14 +4,14 @@ import { createSelector } from 'reselect'
 import Results from './Results';
 
 const mapStateToProps = (state) => ({
-  chaptersSize: state.chapters.length,
+  chaptersSize: state.chapters.present.data.length,
   sectionsSize: getSections(state).length,
   progress: getProgress(state),
 });
 
 const getSections = createSelector(
   state => state.chapters,
-  chapters => chapters.flatMap(chapter => chapter.sections)
+  chapters => chapters.present.data.flatMap(chapter => chapter.sections)
 );
 
 const getProgress = (state) => {

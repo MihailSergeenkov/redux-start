@@ -7,7 +7,10 @@ const SortableContainer = sortableContainer(({ children }) => {
   return <div>{children}</div>;
 });
 
-const ChaptersList = ({ chapters, addChapter, sortChapters }) => {
+const ChaptersList = ({ isLoading, chapters, addChapter, sortChapters }) => {
+  if (isLoading)
+    return <div>Loading...</div>;
+
   return (
     <SortableContainer onSortEnd={sortChapters} useDragHandle>
       {

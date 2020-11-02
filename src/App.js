@@ -5,6 +5,11 @@ import store from './redux/store';
 import Filters from './components/Filters';
 import ChaptersList from './components/ChaptersList';
 import Results from './components/Results';
+import UndoButton from './components/UndoButton';
+
+import { fetchChapters } from './redux/slices/chapters';
+
+store.dispatch(fetchChapters());
 
 function App() {
   return (
@@ -14,6 +19,7 @@ function App() {
         <Filters />
         <ChaptersList />
         <Results />
+        <UndoButton />
       </div>
     </Provider>
   );
