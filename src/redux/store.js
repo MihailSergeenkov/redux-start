@@ -1,8 +1,18 @@
-import { createStore } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import undoable from 'redux-undo';
+import thunkMiddleware from 'redux-thunk';
 
-import reducers from './reducers';
+import chapters from './slices/chapters';
+import visibilityFilter from './slices/visibilityFilter';
 
-export default createStore(
-  reducers,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const reducers = combineReducers({
+  chapters: undoable(chapters),
+  visibilityFilter,
+});
+
+export default configureStore({
+  reducer: reducers,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunkMiddleware),
+  devTools: process.env.NODE_ENV !== 'production',
+});
