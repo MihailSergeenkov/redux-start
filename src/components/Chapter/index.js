@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
+import arrayMove from 'array-move';
 
-import { addSection, sortSections } from '../../redux/slices/chapters';
+import { updateChapter } from '../../redux/slices/chapters';
 import Chapter from './Chapter';
 import { sortableElement } from 'react-sortable-hoc';
 
@@ -12,8 +13,8 @@ const filters = {
 
 const fetchSectionsByChapter = (state) => (
   state.chapters.present.data.reduce(
-    (result, chapter, index) => {
-      result[index] = chapter.sections.filter(filters[state.visibilityFilter]);
+    (result, chapter) => {
+      result[chapter._id] = chapter.sections.filter(filters[state.visibilityFilter]);
       return result;
     },
     {}
@@ -22,22 +23,46 @@ const fetchSectionsByChapter = (state) => (
 
 const mapStateToProps = (state) => ({
   sections: fetchSectionsByChapter(state),
+  chapters: state.chapters.present.data,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addSection: (title, chapterIndex) => (
-    dispatch(addSection({
-      title,
-      chapterIndex,
-    }))
+  updateChapter: (data) => (
+    dispatch(updateChapter(data))
   ),
-  sortSections: ({ oldIndex, newIndex, collection }) => (
-    dispatch(sortSections({
-      oldIndex,
-      newIndex,
-      collection,
-    }))
-    ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(sortableElement(Chapter));
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...ownProps,
+  sections: stateProps.sections,
+  sortSections: dispatchProps.sortSections,
+  addSection: (title, chapterIndex) => {
+    const chapter = stateProps.chapters.find((chapter) => (
+      chapter._id === chapterIndex
+    ));
+
+    dispatchProps.updateChapter({
+      chapterIndex,
+      chapterCompleted: false,
+      sections: chapter.sections.concat({
+        title,
+        completed: false,
+      }),
+    });
+  },
+  sortSections: ({ oldIndex, newIndex, collection }) => {
+    const chapter = stateProps.chapters.find((chapter) => (
+      chapter._id === collection
+    ));
+
+    const sections = arrayMove(chapter.sections, oldIndex, newIndex);
+
+    dispatchProps.updateChapter({
+      chapterIndex: chapter._id,
+      chapterCompleted: chapter.completed,
+      sections,
+    });
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(sortableElement(Chapter));

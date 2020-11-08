@@ -24,6 +24,42 @@ export const fetchChapters = createAsyncThunk(
   },
 );
 
+export const fetchChapter = createAsyncThunk(
+  'chapters/fetchOne',
+  async (objectID) => {
+    const response = await axios({
+      method: 'GET',
+      url: `https://chapters-ac63.restdb.io/rest/chapters/${objectID}`,
+      headers: {
+        'x-apikey': API_KEY,
+      },
+    });
+
+    return response.data;
+  },
+);
+
+export const updateChapter = createAsyncThunk(
+  'chapters/updateOne',
+  async ({ chapterIndex, chapterCompleted, sections }) => {
+    const data = {
+      completed: chapterCompleted,
+      sections,
+    };
+
+    const response = await axios({
+      method: 'PUT',
+      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
+      data,
+      headers: {
+        'x-apikey': API_KEY,
+      },
+    });
+
+    return response.data;
+  },
+);
+
 const chaptersSlice = createSlice({
   name: 'chapters',
   initialState,
@@ -46,64 +82,6 @@ const chaptersSlice = createSlice({
           completed: false,
           sections: [],
         }),
-      };
-    },
-    toggleSection(state, { payload }) {
-      return {
-        ...state,
-        data: state.data.map(
-          (chapter, index) => {
-            if (index === payload.chapterIndex) {
-              const sections = chapter.sections.map(
-                (section, index) => (
-                  index === payload.sectionIndex
-                    ? { ...section, completed: !section.completed }
-                    : section
-                )
-              );
-
-              const completed = sections.every((section) => section.completed === true);
-
-              return { ...chapter, sections, completed }
-            } else {
-              return chapter;
-            }
-          }
-        ),
-      };
-    },
-    addSection(state, { payload }) {
-      return {
-        ...state,
-        data: state.data.map(
-          (chapter, index) => (
-            index === payload.chapterIndex
-              ? {
-                ...chapter,
-                sections: chapter.sections.concat({
-                  title: payload.title,
-                  completed: false,
-                })
-              }
-              : chapter
-          )
-        ),
-      };
-    },
-    sortSections(state, { payload }) {
-      return {
-        ...state,
-        data: state.data.map(
-          (chapter, index) => {
-            if (index === payload.collection) {
-              const sections = arrayMove(chapter.sections, payload.oldIndex, payload.newIndex);
-
-              return { ...chapter, sections }
-            } else {
-              return chapter;
-            }
-          }
-        ),
       };
     },
     replaceSection(state, { payload }) {
@@ -151,6 +129,21 @@ const chaptersSlice = createSlice({
       ...initialState,
       data: action.payload,
     }),
+    [fetchChapter.pending]: (state) => ({
+      ...state,
+      isLoading: true,
+    }),
+    [fetchChapter.fulfilled]: (_, action) => ({
+      ...initialState,
+      data: [action.payload],
+    }),
+    [updateChapter.fulfilled]: (state, action) => {
+      const indexForUpdate = state.data.findIndex((chapter) => (
+        chapter._id === action.payload._id
+      ));
+
+      state.data[indexForUpdate] = action.payload;
+    },
   },
 });
 
