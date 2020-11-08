@@ -1,26 +1,65 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import { Router, matchPath, Route, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 import store from './redux/store';
-import Filters from './components/Filters';
-import ChaptersList from './components/ChaptersList';
-import Results from './components/Results';
-import UndoButton from './components/UndoButton';
+import { fetchChapter, fetchChapters } from './redux/slices/chapters';
 
-import { fetchChapters } from './redux/slices/chapters';
+import MainPage from './components/pages/MainPage';
+import ChapterPage from './components/pages/ChapterPage';
 
-store.dispatch(fetchChapters());
+const history = createBrowserHistory();
+
+const routes = [
+  {
+    component: MainPage,
+    exact: true,
+    strict: true,
+    path: '/',
+    loadData: () => {
+      return store.dispatch(fetchChapters());
+    },
+  },
+  {
+    component: ChapterPage,
+    exact: true,
+    strict: true,
+    path: '/chapters/:id',
+    loadData: (match) => {
+      return store.dispatch(fetchChapter(match.params.id));
+    },
+  },
+];
+
+const onLoad = () => {
+  routes.some(route => {
+    const match = matchPath(window.location.pathname, route);
+    if (match && route.loadData) 
+      route.loadData(match);
+
+    return match;
+  });
+};
+
+onLoad();
+
+history.listen(() => {
+  onLoad();
+});
 
 function App() {
   return (
     <Provider store={store}>
-      <div className="flex flex-col h-full items-center bg-gray-200 text-gray-700">
-        <h1 className="text-4xl font-thin tracking-wider">Interesting book</h1>
-        <Filters />
-        <ChaptersList />
-        <Results />
-        <UndoButton />
-      </div>
+      <Router history={history}>
+        <Switch>
+          {
+            routes.map((route, index) => (
+              <Route key={index} {...route}/>
+            ))
+          }
+        </Switch>
+      </Router>
     </Provider>
   );
 }

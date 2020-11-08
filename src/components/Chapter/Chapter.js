@@ -1,5 +1,6 @@
 import React from 'react';
 import { sortableHandle, sortableContainer } from 'react-sortable-hoc';
+import { Link } from 'react-router-dom'
 
 import Section from '../Section';
 
@@ -22,17 +23,18 @@ const Chapter = ({ chapter, chapterIndex, sections, addSection, sortSections }) 
           readOnly
         />
       </label>
+      <Link to={`/chapters/${chapter._id}`}>View</Link>
       <SortableContainer onSortEnd={sortSections} >
         {
-          sections && sections[chapterIndex].map(
+          sections && sections[chapter._id].map(
             (section, sectionIndex) => (
               <div key={sectionIndex}>
                 <Section
                   index={sectionIndex}
-                  collection={chapterIndex}
+                  collection={chapter._id}
                   section={section}
                   sectionIndex={sectionIndex}
-                  chapterIndex={chapterIndex}
+                  chapterIndex={chapter._id}
                 />
               </div>
             )
@@ -43,7 +45,7 @@ const Chapter = ({ chapter, chapterIndex, sections, addSection, sortSections }) 
         onSubmit={
           (e) => {
             e.preventDefault();
-            addSection(e.target.title.value, chapterIndex);
+            addSection(e.target.title.value, chapter._id);
             e.target.title.value = '';
           }
         }
