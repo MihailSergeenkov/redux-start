@@ -39,9 +39,78 @@ export const fetchChapter = createAsyncThunk(
   },
 );
 
-export const updateChapter = createAsyncThunk(
-  'chapters/updateOne',
-  async ({ chapterIndex, chapterCompleted, sections }) => {
+export const addSection = createAsyncThunk(
+  'chapters/addSection',
+  async ({ title, chapterIndex }, { getState }) => {
+    const chapter = getState().chapters.present.data.find((chapter) => (
+      chapter._id === chapterIndex
+    ));
+
+    const data = {
+      completed: false,
+      sections: chapter.sections.concat({
+        title,
+        completed: false,
+      }),
+    };
+
+    const response = await axios({
+      method: 'PUT',
+      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
+      data,
+      headers: {
+        'x-apikey': API_KEY,
+      },
+    });
+
+    return response.data;
+  },
+);
+
+export const sortSections = createAsyncThunk(
+  'chapters/sortSections',
+  async ({ oldIndex, newIndex, collection: chapterIndex }, { getState }) => {
+    const chapter = getState().chapters.present.data.find((chapter) => (
+      chapter._id === chapterIndex
+    ));
+
+    const sections = arrayMove(chapter.sections, oldIndex, newIndex);
+
+    const data = {
+      completed: chapter.completed,
+      sections,
+    };
+
+    const response = await axios({
+      method: 'PUT',
+      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
+      data,
+      headers: {
+        'x-apikey': API_KEY,
+      },
+    });
+
+    return response.data;
+  },
+);
+
+export const toggleSection = createAsyncThunk(
+  'chapters/toggleSection',
+  async ({ sectionIndex, chapterIndex }, { getState }) => {
+    const chapter = getState().chapters.present.data.find((chapter) => (
+      chapter._id === chapterIndex
+    ));
+
+    const sections = chapter.sections.map(
+      (section, index) => (
+        index === sectionIndex
+          ? { ...section, completed: !section.completed }
+          : section
+      )
+    );
+
+    const chapterCompleted = sections.every((section) => section.completed === true);
+
     const data = {
       completed: chapterCompleted,
       sections,
@@ -137,7 +206,21 @@ const chaptersSlice = createSlice({
       ...initialState,
       data: [action.payload],
     }),
-    [updateChapter.fulfilled]: (state, action) => {
+    [addSection.fulfilled]: (state, action) => {
+      const indexForUpdate = state.data.findIndex((chapter) => (
+        chapter._id === action.payload._id
+      ));
+
+      state.data[indexForUpdate] = action.payload;
+    },
+    [toggleSection.fulfilled]: (state, action) => {
+      const indexForUpdate = state.data.findIndex((chapter) => (
+        chapter._id === action.payload._id
+      ));
+
+      state.data[indexForUpdate] = action.payload;
+    },
+    [sortSections.fulfilled]: (state, action) => {
       const indexForUpdate = state.data.findIndex((chapter) => (
         chapter._id === action.payload._id
       ));
@@ -150,9 +233,6 @@ const chaptersSlice = createSlice({
 export const {
   sortChapters,
   addChapter,
-  toggleSection,
-  addSection,
-  sortSections,
   replaceSection,
 } = chaptersSlice.actions;
 
