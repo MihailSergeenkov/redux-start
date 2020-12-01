@@ -9,7 +9,7 @@ import { fetchChapter, fetchChapters } from './redux/slices/chapters';
 import MainPage from './components/pages/MainPage';
 import ChapterPage from './components/pages/ChapterPage';
 
-const history = createBrowserHistory();
+const browserHistory = createBrowserHistory();
 
 const routes = [
   {
@@ -44,11 +44,13 @@ const onLoad = () => {
 
 onLoad();
 
-history.listen(() => {
+browserHistory.listen(() => {
   onLoad();
 });
 
-function App() {
+function App(props) {
+  const history = props.history || browserHistory;
+
   return (
     <Provider store={store}>
       <Router history={history}>
