@@ -6,7 +6,7 @@ import thunkMiddleware from 'redux-thunk';
 import chapters from './slices/chapters';
 import visibilityFilter from './slices/visibilityFilter';
 
-const reducers = combineReducers({
+export const reducers = combineReducers({
   chapters: undoable(chapters),
   visibilityFilter,
 });

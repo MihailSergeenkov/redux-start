@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import arrayMove from 'array-move';
-import axios from 'axios';
 
-const API_KEY = '5f9ef25d231ba42851b4a03c';
+import httpClient from '../../util/httpClient';
 
 const initialState = {
   isLoading: false,
@@ -12,13 +11,7 @@ const initialState = {
 export const fetchChapters = createAsyncThunk(
   'chapters/fetchAll',
   async () => {
-    const response = await axios({
-      method: 'GET',
-      url: 'https://chapters-ac63.restdb.io/rest/chapters',
-      headers: {
-        'x-apikey': API_KEY,
-      },
-    });
+    const response = await httpClient.get('/chapters');
 
     return response.data;
   },
@@ -27,13 +20,7 @@ export const fetchChapters = createAsyncThunk(
 export const fetchChapter = createAsyncThunk(
   'chapters/fetchOne',
   async (objectID) => {
-    const response = await axios({
-      method: 'GET',
-      url: `https://chapters-ac63.restdb.io/rest/chapters/${objectID}`,
-      headers: {
-        'x-apikey': API_KEY,
-      },
-    });
+    const response = await httpClient.get(`/chapters/${objectID}`);
 
     return response.data;
   },
@@ -54,14 +41,7 @@ export const addSection = createAsyncThunk(
       }),
     };
 
-    const response = await axios({
-      method: 'PUT',
-      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
-      data,
-      headers: {
-        'x-apikey': API_KEY,
-      },
-    });
+    const response = await httpClient.put(`/chapters/${chapterIndex}`, data);
 
     return response.data;
   },
@@ -81,14 +61,7 @@ export const sortSections = createAsyncThunk(
       sections,
     };
 
-    const response = await axios({
-      method: 'PUT',
-      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
-      data,
-      headers: {
-        'x-apikey': API_KEY,
-      },
-    });
+    const response = await httpClient.put(`/chapters/${chapterIndex}`, data);
 
     return response.data;
   },
@@ -116,14 +89,7 @@ export const toggleSection = createAsyncThunk(
       sections,
     };
 
-    const response = await axios({
-      method: 'PUT',
-      url: `https://chapters-ac63.restdb.io/rest/chapters/${chapterIndex}`,
-      data,
-      headers: {
-        'x-apikey': API_KEY,
-      },
-    });
+    const response = await httpClient.put(`/chapters/${chapterIndex}`, data);
 
     return response.data;
   },
