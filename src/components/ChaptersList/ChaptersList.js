@@ -34,7 +34,7 @@ const ChaptersList = ({ isLoading, chapters, addChapter, sortChapters }) => {
           }
         }
       >
-        <input name='title' />
+        <input name='title' className='chapter-name' />
         <button>Add chapter</button>
       </form>
     </SortableContainer>

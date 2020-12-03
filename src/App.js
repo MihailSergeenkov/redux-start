@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { Router, matchPath, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
@@ -42,13 +42,15 @@ const onLoad = () => {
   });
 };
 
-onLoad();
-
 browserHistory.listen(() => {
   onLoad();
 });
 
 function App(props) {
+  useEffect(() => {
+    onLoad();
+  }, []);
+
   const history = props.history || browserHistory;
 
   return (
