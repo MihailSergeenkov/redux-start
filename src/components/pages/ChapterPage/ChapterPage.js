@@ -1,11 +1,6 @@
 import React from 'react';
 
-import { useStore } from 'react-redux';
-
 const ChapterPage = ({ isLoading, chapter }) => {
-  console.log(isLoading);
-  console.log(chapter);
-  console.log(useStore().getState());
   if (isLoading)
     return <div>Loading...</div>;
 

@@ -15,6 +15,8 @@ export const handlers = [
       ctx.status(201),
       ctx.json({
         ...JSON.parse(req.body),
+        completed: false, 
+        sections: [],
         _id: 'qwer3',
       }),
     );

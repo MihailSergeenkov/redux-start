@@ -1,0 +1,35 @@
+---
+name: ChapterPage
+menu: Components
+---
+
+import '../../../../index.css';
+import { Playground } from 'docz';
+import ChapterPage from '../ChapterPage';
+
+# ChapterPage
+
+> Компонент для отображения страницы главы. 
+
+### Выполняется загрузка данных
+<Playground>
+  <ChapterPage 
+    isLoading 
+    chapter={null}
+  />
+</Playground>
+
+### Данные загружены
+<Playground>
+  <ChapterPage 
+    isLoading={false} 
+    chapter={
+      { 
+        _id: 'qwer1', 
+        title: '1 chapter', 
+        completed: false, 
+        sections: [{ title: 'sdf', completed: false }]
+      }
+    }
+  />
+</Playground>

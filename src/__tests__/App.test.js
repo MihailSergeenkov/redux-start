@@ -19,13 +19,12 @@ const chapters = {
   ]
 };
 
-const promise = Promise.resolve(chapters);
-
-httpClient.get.mockImplementationOnce(() => promise);
-
 describe('Routing', () => {
   describe('Main page', () => {
     it('renders page', async () => {
+      const promise = Promise.resolve(chapters);
+      httpClient.get.mockImplementationOnce(() => promise);
+
       render(<App />);
 
       const headerEl = screen.getByText('Interesting book');
@@ -36,25 +35,10 @@ describe('Routing', () => {
 
       expect(loaderEl).toBeTruthy();
 
-      
-
       await act(() => promise);
-      // await act(async () => {
-      //   () => promise;
-      //   rerender(<App />);
-      //   await ;
-      // });
 
-      // expect(httpClient.get).toHaveBeenCalledTimes(1);
-      // expect(httpClient.get).toHaveBeenCalledWith('/chapters');
-
-      // expect(await screen.findByText('1 chapter')).toBeInTheDocument();
-      // screen.debug();
-
-
-      // await waitFor(async () => expect(await screen.findByText('1 chapter')).toBeInTheDocument());
-      
-      // expect(screen.getByText('1 chapter')).toBeInTheDocument();
+      expect(httpClient.get).toHaveBeenCalledTimes(1);
+      expect(httpClient.get).toHaveBeenCalledWith('/chapters');
 
       const chapterEl = screen.getByText('1 chapter');
 
@@ -63,24 +47,51 @@ describe('Routing', () => {
   });
   
   describe('Chapter page', () => {
-    it('renders page', () => {
+    const chapter = {
+      data: {
+        _id: 'qwer1',
+        title: '1 chapter',
+        completed: false,
+        sections: [{ title: 'sdf', completed: false }]
+      }
+    };
+
+    it('renders page', async () => {
+      const chaptersPromise = Promise.resolve(chapters);
+      httpClient.get.mockImplementationOnce(() => chaptersPromise);
+      const chapterPromise = Promise.resolve(chapter);
+      httpClient.get.mockImplementationOnce(() => chapterPromise);
+
       render(<App />);
+
+      await act(() => chaptersPromise);
+      
       const chapterBtn = screen.getByText('View');
 
       userEvent.click(chapterBtn);
+      
+      await act(() => chapterPromise);
 
       const headerEl = screen.getByText('Chapter');
 
       expect(headerEl).toBeTruthy();
     });
 
-    it('has correct path', () => {
+    it('has correct path', async () => {
       const history = createMemoryHistory();
+      // Не понимаю почему тут сразу срабатывает редьюсер fetchChapter(), а не fetchChapters()
+      // как будто тесты не изолированны друг от друга
+      // const chaptersPromise = Promise.resolve(chapters);
+      // httpClient.get.mockImplementationOnce(() => chaptersPromise);
+      const chapterPromise = Promise.resolve(chapter);
+      httpClient.get.mockImplementationOnce(() => chapterPromise);
+
       render(<App history={history} />);
+
+      await act(() => chapterPromise);
+
       const chapterBtn = screen.getByText('View');
-
       userEvent.click(chapterBtn);
-
       const { location: { pathname } } = history;
 
       expect(pathname).toBe('/chapters/qwer1');
